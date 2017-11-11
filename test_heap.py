@@ -1,7 +1,7 @@
 """Unit tests for MinHeap and MaxHeap."""
 import unittest
 
-from heap import MaxHeap, MinHeap
+from heap import Heap
 
 
 class TestMaxHeap(unittest.TestCase):
@@ -9,7 +9,7 @@ class TestMaxHeap(unittest.TestCase):
 
     def setUp(self):
         """Create objects for testing."""
-        self.test_heap = MaxHeap()
+        self.test_heap = Heap(heap_type='max')
         values_to_insert = [55, 47, 42, 31, 32, 33, 34, 25, 26]
         for value in values_to_insert:
             self.test_heap.insert(value)
@@ -50,7 +50,7 @@ class TestMinHeap(unittest.TestCase):
 
     def setUp(self):
         """Create objects for testing."""
-        self.test_heap = MinHeap()
+        self.test_heap = Heap(heap_type='min')
         values_to_insert = [55, 47, 42, 31, 32, 33, 34, 25, 26]
         for value in values_to_insert:
             self.test_heap.insert(value)
