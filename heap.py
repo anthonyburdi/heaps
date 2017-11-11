@@ -78,6 +78,47 @@ class Heap(object):
         self.heap[position_1] = self.heap[position_2]
         self.heap[position_2] = temp
 
+    def check_node_vs_parent(self, current_position, heap_type):
+        """Check node vs parent. Bigger than parent if max, smaller if min."""
+        if self.heap_type == 'max':
+            return (
+                self.heap[current_position] >
+                self.parent_value(current_position)
+            )
+        elif self.heap_type == 'min':
+            return (
+                self.heap[current_position] <
+                self.parent_value(current_position)
+            )
+
+    def swap_left_child_bool(self, current_position, heap_type):
+        """Check node vs left child, True if should be swapped."""
+        current_larger_than_left = (
+            self.heap[current_position] >
+            self.left_child_value(current_position)
+        )
+        if heap_type == 'max':
+            return not current_larger_than_left
+        if heap_type == 'min':
+            return current_larger_than_left
+
+    def largest_or_smallest_child(self, current_position, heap_type):
+        """Position of largest (max heap) or smallest (min heap) child."""
+        if (
+            self.left_child_value(current_position) >
+            self.right_child_value(current_position)
+        ):
+            if self.heap_type == 'max':
+                return self.left_child_position(current_position)
+            elif self.heap_type == 'min':
+                return self.right_child_position(current_position)
+
+        else:
+            if self.heap_type == 'max':
+                return self.right_child_position(current_position)
+            if self.heap_type == 'min':
+                return self.left_child_position(current_position)
+
     def heapify_up(self):
         """Make sure heap property is satisfied after insert."""
         # Initialize current position and make sure current node has a parent
@@ -85,120 +126,48 @@ class Heap(object):
         if not self.has_parent(current_position):
             return
 
-        if self.heap_type == 'max':
-            # check if last node entered is bigger than it's parent
-            while (
-                (
-                    self.heap[current_position] >
-                    self.parent_value(current_position)
-                ) and
-                self.has_parent(current_position)
-            ):
-                # if so, swap
-                self.swap(
-                    current_position,
-                    self.parent_position(current_position)
-                )
-                current_position = self.parent_position(current_position)
-
-        elif self.heap_type == 'min':
-            # check if last node entered is smaller than it's parent
-            while (
-                (
-                    self.heap[current_position] <
-                    self.parent_value(current_position)
-                ) and
-                self.has_parent(current_position)
-            ):
-                # if so, swap
-                self.swap(
-                    current_position,
-                    self.parent_position(current_position)
-                )
-                current_position = self.parent_position(current_position)
+        while (
+            # check if last node entered is bigger or smaller than it's parent
+            # based on min or max heap type
+            self.check_node_vs_parent(current_position, self.heap_type) and
+            self.has_parent(current_position)
+        ):
+            # if so, swap
+            self.swap(
+                current_position,
+                self.parent_position(current_position)
+            )
+            current_position = self.parent_position(current_position)
 
     def heapify_down(self):
         """Make sure heap property is satisfied after popping top node."""
         current_position = 0
 
-        if self.heap_type == 'max':
-            # if current node is smaller than either of it's children,
-            # swap w largest
-            while self.has_left_child(current_position):
+        # Swap nodes based on heap type
+        while self.has_left_child(current_position):
 
-                # Check if it has right child, if so swap with larger child
-                if self.has_right_child:
-                    if (
-                        self.left_child_value(current_position) >
-                        self.right_child_value(current_position)
-                    ):
-                        self.swap(
-                            current_position,
-                            self.left_child_position(current_position)
-                        )
-                        # New current_node is former left child node
-                        current_position = self.left_child_position(
-                            current_position
-                        )
-                        continue
-                    else:
-                        self.swap(
-                            current_position,
-                            self.right_child_position(current_position)
-                        )
-                        # New current_node is former right child node
-                        current_position = self.right_child_position(
-                            current_position
-                        )
-                        continue
+            # Check if it has right child, if so swap with appropriate child
+            if self.has_right_child(current_position):
+                child_to_swap_position = self.largest_or_smallest_child(
+                    current_position,
+                    self.heap_type
+                )
 
-                # if not right child, then check if smaller than left child
-                if (
-                    self.left_child_value(current_position) >
-                    self.heap[current_position]
+                self.swap(current_position, child_to_swap_position)
+
+                # New current_node is swapped child position
+                current_position = child_to_swap_position
+                continue
+
+            else:
+                # If no right child, then check if should swap with left child
+                if self.swap_left_child_bool(
+                    current_position,
+                    self.heap_type
                 ):
                     self.swap(
                         current_position,
                         self.left_child_position(current_position)
                     )
 
-        if self.heap_type == 'min':
-            # if current node is larger than either of it's children,
-            # swap w smallest
-            while self.has_left_child(current_position):
-
-                # Check if it has right child, if so swap with smaller child
-                if self.has_right_child:
-                    if (
-                        self.left_child_value(current_position) <
-                        self.right_child_value(current_position)
-                    ):
-                        self.swap(
-                            current_position,
-                            self.left_child_position(current_position)
-                        )
-                        # New current_node is former left child node
-                        current_position = self.left_child_position(
-                            current_position
-                        )
-                        continue
-                    else:
-                        self.swap(
-                            current_position,
-                            self.right_child_position(current_position)
-                        )
-                        # New current_node is former right child node
-                        current_position = self.right_child_position(
-                            current_position
-                        )
-                        continue
-
-                # if not right child, then check if larger than left child
-                if (
-                    self.left_child_value(current_position) <
-                    self.heap[current_position]
-                ):
-                    self.swap(
-                        current_position,
-                        self.left_child_position(current_position)
-                    )
+                # There should be no lower nodes in this case.
