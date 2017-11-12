@@ -3,8 +3,6 @@ import unittest
 
 from heap import Heap
 import running_median
-# insert(min_heap, max_heap, value, verbose=False)
-# get_median(min_heap, max_heap)
 
 
 class TestRunningMedian(unittest.TestCase):
