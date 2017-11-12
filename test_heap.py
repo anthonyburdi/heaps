@@ -62,5 +62,28 @@ class TestMinHeap(unittest.TestCase):
             [25, 26, 33, 31, 42, 47, 34, 55, 32]
         )
 
+    def test_pop_top(self):
+        """Test popping the top of the heap."""
+        top_node_value = self.test_heap.pop_top()
+        self.assertEqual(top_node_value, 25)
+        self.assertEqual(self.test_heap.peek(), 26)
+        self.assertEqual(self.test_heap.heap, [26, 31, 33, 32, 42, 47, 34, 55])
+
+        # let's pop again and check
+        top_node_value = self.test_heap.pop_top()
+        self.assertEqual(top_node_value, 26)
+        self.assertEqual(self.test_heap.peek(), 31)
+        self.assertEqual(self.test_heap.heap, [31, 32, 33, 55, 42, 47, 34])
+
+    def test_insert(self):
+        """Test inserting several values."""
+        self.test_heap.insert(100)
+        self.test_heap.insert(15)
+        self.test_heap.insert(38)
+        self.assertEqual(
+            self.test_heap.heap,
+            [15, 25, 33, 31, 26, 38, 34, 55, 32, 100, 42, 47]
+        )
+
 if __name__ == '__main__':
     unittest.main()

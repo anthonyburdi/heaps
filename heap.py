@@ -25,7 +25,10 @@ class Heap(object):
 
     def peek(self):
         """Look at the top node without removing."""
-        return self.heap[0]
+        if self.heap:
+            return self.heap[0]
+        else:
+            return None
 
     def pop_top(self):
         """Remove the top node and re-heapify."""
@@ -169,5 +172,7 @@ class Heap(object):
                         current_position,
                         self.left_child_position(current_position)
                     )
+                    break
+                break
 
                 # There should be no lower nodes in this case.
